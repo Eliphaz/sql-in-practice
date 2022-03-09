@@ -29,7 +29,8 @@ module.exports = {
     approveAppointment: (req, res) => {
         let {apptId} = req.body
     
-        sequelize.query(`*****YOUR CODE HERE*****
+        sequelize.query(`update cc_appointments set approved = 'true'
+        where appt_id = ${apptId}
         
         insert into cc_emp_appts (emp_id, appt_id)
         values (${nextEmp}, ${apptId}),
@@ -48,5 +49,21 @@ module.exports = {
         join cc_clients on cc_users.user_id = cc_clients.user_id
         `).then(dbRes => res.status(200).send(dbRes[0]))
         .catch(err => console.log(err))
+    },
+
+    getPendingAppointments: (req,res) => {
+        sequelize.query(`
+        select * from cc_appointments
+        where approved = false`).then(
+            dbRes => res.status(200).send(dbRes[0])
+        ).catch(err => console.log(err))
+    },
+
+    completeAppointment: (req,res)=>{
+        sequelize.query(`
+        update cc_appointments set completed = 'true'
+        where appt_id = req.body.apptID
+        `).then(dbRes => res.status(200).send(dbRes[0]))
+        .catch(err=> console.log(err))
     }
 }
